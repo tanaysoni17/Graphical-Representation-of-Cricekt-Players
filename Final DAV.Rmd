@@ -1,0 +1,169 @@
+---
+title: "DAV Finals"
+author: "Tanay"
+date: "5/4/2021"
+output: html_document
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(data.table)
+library(csv)
+library(GGally)
+```
+
+```{r}
+batting_status <- read.csv("C:/Users/Tanay Soni/Desktop/Rutgers 1 Sem/DAV/Final Project/bat.csv")
+bowling_status <- read.csv("C:/Users/Tanay Soni/Desktop/Rutgers 1 Sem/DAV/Final Project/bowl.csv")
+```
+
+```{r}
+bat = copy(batting_status)
+setDT(bat)
+```
+
+```{r}
+str(bat)
+```
+
+```{r}
+unique(bat$Type)
+```
+
+```{r}
+bat[,Type:=factor(Type, levels = c("IPL", "ODI" , "T20" , "Test"), labels = c("IPL", "ODI" , "T20" , "Test"))]
+summary(bat)
+```
+
+```{r}
+unique(bat$Team)
+```
+
+```{r}
+bat[,Team:=factor(Team, levels = c("India", "Ireland", "Pakistan", "Australia", "Sri-Lanka", "Bangladesh", "England", "West-Indies", "South-Africa", "Zimbabwe", "New-Zealand", "Afghanistan"), labels = c("India", "Ireland", "Pakistan", "Australia", "Sri-Lanka", "Bangladesh", "England", "West-Indies", "South-Africa", "Zimbabwe", "New-Zealand", "Afghanistan"))]
+summary(bat)
+```
+```{r}
+#unique(bat$Player)
+```
+```{r}
+# bat[,Player:=factor(Player, ordered = TRUE)]
+# summary(bat)
+```
+
+```{r}
+table(is.na(bat))
+```
+
+```{r, warning=FALSE, message=FALSE}
+ggpairs(bat, columns = 2:ncol(bat))
+```
+
+```{r}
+model1 <- lm(Runs~.-(Player+Team), data=bat)
+summary(model1)
+```
+
+```{r}
+model2 <- step(model1)
+summary(model2)
+```
+
+```{r}
+model3 = glm(Runs~.-(Player + Team), data=bat)
+summary(model3)
+```
+
+```{r}
+model4 = step(model3)
+summary(model4)
+```
+
+
+```{r}
+ggplot(bat, aes(x=BF, y=Runs, color = Type))+
+  geom_point(size = 0.02)+
+  geom_smooth(se=FALSE) + theme_bw()
+```
+
+```{r}
+ggplot(bat, aes(x=Inn, y=Runs, color = Type))+
+  geom_point()+
+  geom_smooth(se=FALSE) + theme_bw()
+```
+
+```{r}
+#write.csv(bat, "C:\\Users\\Tanay Soni\\Desktop\\Rutgers 1 Sem\\DAV\\Final Project\\bating_cleaned.csv")
+```
+
+
+```{r}
+bowl = copy(bowling_status)
+setDT(bowl)
+```
+
+
+```{r}
+summary(bowl)
+```
+
+```{r}
+str(bowl)
+```
+
+```{r}
+unique(bowl$Type)
+```
+```{r}
+unique(bowl$Team)
+```
+
+
+```{r}
+bowl[,Type:=factor(Type, levels = c("IPL", "ODI", "T20", "Test"), labels = c("IPL", "ODI", "T20", "Test"))]
+```
+
+```{r}
+bowl[,Team:=factor(Team, ordered = TRUE)]
+```
+
+```{r}
+summary(bowl)
+```
+
+```{r}
+bowl = subset(bowl, select = -c(9,10))
+summary(bowl)
+```
+
+```{r}
+#write.csv(bowl, "C:\\Users\\Tanay Soni\\Desktop\\Rutgers 1 Sem\\DAV\\Final Project\\bowling_cleaned.csv")
+```
+
+```{r}
+ggplot(bowl, aes(x=Wkts, y=Econ, color=Type)) + geom_point(size=0.02)+geom_smooth(se=FALSE) + theme_bw()
+```
+
+```{r}
+ggplot(bowl, aes(x=Wkts, y=Econ)) + geom_point(size=0.02)+geom_smooth(se=FALSE) + theme_bw()
+```
+
+
+```{r}
+ggplot(bowl, aes(x=Type, y=Runs)) + geom_boxplot()
+```
+
+
+
+```{r, warning=FALSE, message=FALSE}
+ggpairs(bowl, columns = 2:ncol(bowl))
+```
+
+
+
+
+
+
+
+
+
